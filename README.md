@@ -1,140 +1,106 @@
-<div align="center">
+# PorsiPas — Deck Presentasi ITCC 2026
 
-# ⚡ Bolt Slides
+Deck presentasi untuk **Lomba UX Design ITCC 2026**, subtema *Smart Public Service* · *Smart Waste & Resource Optimization*.
 
-**Presentation decks that are working web apps.**
+Deck ini menjelaskan bagaimana **PorsiPas** — sistem umpan balik Program Makan Bergizi Gratis (MBG) — mengubah masukan siswa dan koordinator titik menjadi data yang bisa langsung dipakai SPPG untuk mengevaluasi menu, menyesuaikan porsi, dan mengurangi *food loss and waste*.
 
-One prompt in — your agent builds a deck where every slide is a live, responsive web page.
-3D, live data, working prototypes, and whatever you can prompt.
-
-[![Open in Bolt](https://img.shields.io/badge/Open_in-⚡_Bolt-1a1a2e?style=flat-square)](https://bolt.new/github.com/stackblitz/bolt-slides)
-[![Open in StackBlitz](https://img.shields.io/badge/Open_in-StackBlitz-1389fd?style=flat-square)](https://stackblitz.com/github/stackblitz/bolt-slides)
-[![License: MIT](https://img.shields.io/badge/License-MIT-c8f56e?style=flat-square)](./LICENSE)
-
-<img src=".github/assets/demo.gif" alt="Bolt Slides — from one prompt in Bolt to a finished interactive deck" width="820" />
-
-</div>
+- **Tim:** ERRIC — Chery Ardin Dimalta, Muhammad Rizieq Anwar, Reyvan Andycka Farrel Alinskie
+- **Institusi:** Politeknik Elektronika Negeri Surabaya (PENS), 2026
+- **Bahasa deck:** Indonesia
 
 ---
 
-## Why we made this
+## Isi deck (15 slide)
 
-AI for slides is awesome, but the outputs tend to be slop: generic layouts, walls of bullets, nothing you'd be proud to present.
+| # | Slide | Isi |
+|---|---|---|
+| 1 | Cover | Judul, tim, subtema |
+| 2 | BigNumber | 23–48 juta ton FLW/tahun (Bappenas, 2021) |
+| 3 | Latar belakang | Porsi, distribusi, evaluasi menu di lapangan |
+| 4 | Konteks | 49,05 juta penerima, Rp213–551 T/tahun, 7,29% emisi, 42% siswa |
+| 5 | Pain points | Empat keluhan hasil wawancara SPPG & ahli gizi |
+| 6 | Define | Tiga kendala utama (click-build) |
+| 7 | Section | Solusi: PorsiPas |
+| 8 | Loop tertutup | Empat sisi pengguna dalam satu lingkar umpan balik |
+| 9 | Prototype siswa | Beranda anonim + Masuk staf |
+| 10 | Prototype siswa | Micro-feedback 5–10 detik + Mode Kiosk |
+| 11 | Prototype SPPG | Menu Acceptance Dashboard |
+| 12 | Prototype tim | Koordinator Titik, Penyalur, Admin |
+| 13 | Metodologi | Lima tahap Design Thinking |
+| 14 | Usability testing | Tabel temuan dan perbaikannya |
+| 15 | Kesimpulan | Ringkasan + tautan prototype, moodboard, style guide |
 
-And also: why are slides still *static*? Agents can build *anything*. What would it look like if you (tastefully) turned them loose on slides?
+Angka dan isi slide bersumber dari dokumen laporan ERRIC dan hasil usability testing; screenshot prototype berasal dari High-Fidelity prototype PorsiPas.
 
-Bolt Slides is what we built to find out: building blocks any agent (Claude Code, Codex, Cursor, Bolt) can compose stunning, compelling presentations with. Bespoke layouts, real typography, considered animations, interactive anything. Every deck is a real web app, responsive on any screen, shared as a link.
+---
 
-**Taste comes standard.**
-
-[See what that looks like →](https://x.com/boltdotnew/status/2077770386444341332?s=20)
-
-Under the hood it's a classic paged deck — Slidev-style dock, thumbnail sidebar, grid overview, click-builds, annotations, synced presenter mode — where each slide is a plain React component. If you can build it for the web, you can present it.
-
-## Quick start
-
-**With an agent (the fun way).** Open the repo in [Bolt](https://bolt.new/github.com/stackblitz/bolt-slides) and prompt it:
-
-> Build me a deck pitching «your thing» to «your audience».
-
-The bundled skill ([`.bolt/skills/slides/SKILL.md`](./.bolt/skills/slides/SKILL.md)) teaches the agent how to theme, compose, and write the deck — including setting the tab title and favicon — so a single prompt returns a finished, presentable app.
-
-**By hand.**
+## Menjalankan secara lokal
 
 ```bash
-git clone https://github.com/stackblitz/bolt-slides
-cd bolt-slides
 npm install
-npm run dev
+npm run dev      # server pengembangan
+npm run build    # build produksi → dist/
+npx tsc --noEmit # cek tipe
 ```
 
-The dev server opens a 26-slide demo that exercises every component. Delete the demo slides in [`src/App.tsx`](./src/App.tsx) and author your own.
+Butuh Node 20+.
 
-## Authoring
+---
 
-Each top-level child of `<Deck>` is one slide. Compose them from the component library, or write plain JSX:
+## Deploy ke Vercel
 
-```tsx
-<Deck>
-  <Cover
-    kicker="Acme · Series A"
-    title={<span className="accent-text">Acme</span>}
-    subtitle="Answers, not dashboards."
-    notes="Welcome — set up the problem, then hold a beat."
-  />
+1. Push repo ini ke GitHub.
+2. Di Vercel: **Add New → Project** → pilih repo ini.
+3. Biarkan preset terdeteksi otomatis (**Vite**):
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+   - Install Command: `npm install`
+4. **Deploy.** Tidak perlu `vercel.json` — deck memakai routing hash, tanpa server-side routing.
 
-  <Slide center nav="Thesis">
-    <h2 className="headline">
-      Dashboards are everywhere. <span className="accent-text">Insight isn't.</span>
-    </h2>
-    <Build at={1}>
-      <p className="subhead">Acme turns raw events into answers — automatically.</p>
-    </Build>
-  </Slide>
+Alternatif lewat CLI:
 
-  <Agenda
-    kicker="Agenda"
-    title="What we'll cover."
-    items={['The problem', 'How it works', { title: 'Pricing & the ask', hint: '5 min' }]}
-  />
-</Deck>
+```bash
+npx vercel        # preview
+npx vercel --prod # deploy produksi
 ```
 
-- **`<Build at={n}>`** reveals content on the nth click — arrow keys step through builds before advancing slides, forward *and* back.
-- **`notes="…"`** on any slide shows up in presenter mode; notes you edit while presenting persist locally.
-- Slides are ordinary React — fetch live data, mount a 3D scene, embed your actual product.
+Setelah aktif, hostname (`*.vercel.app`) bisa dipasang sebagai custom domain di **Project → Settings → Domains**.
 
-## Presenting
+---
 
-<img src=".github/assets/grid-view.png" alt="Grid view of every slide" width="820" />
+## Presentasi
 
-| Key | Action |
-| --- | --- |
-| `→` `↓` `Space` | Next (reveals builds first) |
-| `←` `↑` | Previous (rewinds builds) |
-| `Home` / `End` | First / last slide |
-| `S` | Sidebar — thumbnail rail |
-| `G` | Grid view — every slide at once |
-| `A` | Annotate — pen, highlighter, shapes, eraser |
+| Tombol | Fungsi |
+|---|---|
+| `→` `↓` `Space` | Slide berikutnya (reveal build dulu sebelum pindah) |
+| `←` `↑` | Slide sebelumnya |
+| `Home` / `End` | Slide pertama / terakhir |
+| `S` | Thumbnail rail |
+| `G` | Grid view semua slide |
+| `A` | Anotasi (pen, highlighter, shapes) |
 | `F` | Fullscreen |
-| `P` | Presenter mode — synced new tab |
-| `H` | Hide the UI |
-| `Esc` | Close overlays |
+| `P` | Presenter mode (timer + catatan, tab baru) |
+| `H` | Sembunyikan UI |
 
-- **Presenter mode** opens in a second tab with a timer, next-slide preview, and editable notes — kept in sync with the audience tab via `BroadcastChannel`.
-- **Annotations are content-anchored**: a circle drawn around a stat on a laptop rings the same stat on a phone, wherever the layout moved it. Drawings persist per slide.
-- **Deep links**: the URL hash tracks the slide (`/#7`), so you can share a link straight to a slide.
+Catatan pembicara tersedia di setiap slide lewat `notes` dan dapat disunting saat presentasi. Tautan slide ada di URL hash, jadi `/#11` membuka langsung slide 11.
 
-## Component library
+---
 
-| | Components |
-| --- | --- |
-| **Structure** | `Cover` `Agenda` `Section` `Split` `Bento` `Slide` |
-| **Data** | `Charts` (bar · line · donut) `Table` `StatGrid` `BigNumber` `CountUp` `VisualDashboard` |
-| **Story** | `Quote` `Contrast` `Comparison` `Timeline` `Steps` `Chat` |
-| **Product** | `CodeWindow` `BrowserFrame` `Pricing` `Team` |
-| **Flair** | `Globe` `TiltCard` `SpotlightCard` `Marquee` `Accordion` `Tabs` |
-
-All of them are demoed in the bundled starter deck, and all of them are responsive.
-
-## Theming
-
-Every color, font, radius, and shadow lives in the `:root` block of [`src/styles/tokens.css`](./src/styles/tokens.css). Change `--primary` and the entire deck — chrome included — recolors. Nine ready-made theme directions are documented in the skill, from editorial luxury to dark technical.
-
-## Project structure
+## Struktur proyek
 
 ```
-.bolt/skills/slides/   the agent-facing authoring guide (the skill)
-src/deck/              engine + chrome — Deck, Slide, Build, Reveal, Annotator
-src/components/        the slide component library
-src/styles/            tokens.css (theme) + base.css (system styles)
-src/App.tsx            your deck (ships with the component demo)
+`src/App.tsx` — deck (15 slide), satu-satunya file isi yang dicustomize
+`src/deck/` — engine + chrome deck (Deck, Slide, Build, Reveal, Annotator)
+`src/components/` — library komponen slide
+`src/styles/tokens.css` — tema; hanya blok `:root` yang diedit (warna, font, radius, motion)
+`src/styles/base.css` — style sistem (hanya font import + `color-scheme` yang diubah)
+`public/prototype/` — screenshot prototype yang sudah di-crop per layar
 ```
 
-## Contributing
+ Tema deck memakai brand PorsiPas: navy `#1E2F40` sebagai tinta, oranye `#CC6B28` sebagai aksen, dan Plus Jakarta Sans. Mengubah `--primary` di `tokens.css` akan mewarnai seluruh deck.
 
-Issues and PRs welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md). `npm run dev` to hack, `npx tsc --noEmit && npm run build` before you push.
+---
 
-## License
+## Credits
 
-[MIT](./LICENSE) © StackBlitz
+Deck ini dibangun di atas [Bolt Slides](https://github.com/stackblitz/bolt-slides) dari StackBlitz — engine deck + library komponen, MIT License. engine dan chrome (`src/deck/`) tidak dimodifikasi; seluruh isi deck, tema, dan aset visual adalah karya tim ERRIC.
