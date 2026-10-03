@@ -1,51 +1,50 @@
 /* ===================================================================
    THEME TOKENS — edit ONLY this :root block to re-theme the whole deck.
    The SAME token vocabulary as the `slides` (Slidev) and `webdeck` skills,
-   so a brand looks identical across all of them. The values below are a
-   "dark product" default — REPLACE them to match the brief or the brand.
+   so a brand looks identical across all of them. The values below are
+   the PorsiPas paper-editorial theme (navy ink, orange accent).
    =================================================================== */
 :root {
   /* Surfaces */
-  --bg: #05070a;
-  --bg-grad-1: rgba(79, 229, 176, 0.12);
-  --bg-grad-2: rgba(41, 192, 240, 0.08);
-  --surface: rgba(255, 255, 255, 0.045);
-  --surface-2: rgba(255, 255, 255, 0.07);
+  --bg: #fbf8f4;
+  --bg-grad-1: rgba(204, 107, 40, 0.11);
+  --bg-grad-2: rgba(30, 47, 64, 0.08);
+  --surface: rgba(30, 47, 64, 0.035);
+  --surface-2: rgba(30, 47, 64, 0.06);
 
   /* Ink */
-  --fg: #f4f7fa;
-  --fg-muted: #9aa4b2;
-  --fg-faint: #626d7d;
+  --fg: #1e2f40;
+  --fg-muted: #4a5b6c;
+  --fg-faint: #8a97a5;
 
   /* Hairlines */
-  --hair: rgba(255, 255, 255, 0.1);
-  --hair-2: rgba(255, 255, 255, 0.06);
+  --hair: rgba(30, 47, 64, 0.14);
+  --hair-2: rgba(30, 47, 64, 0.08);
 
   /* Accent — ONE accent. May be a 2–4 stop gradient within ~80° of hue. */
-  --primary: #4fe5b0;
+  --primary: #cc6b28;
   --accent: linear-gradient(
     115deg,
-    #c8f56e 0%,
-    #5aeeb0 42%,
-    #34dcd8 74%,
-    #29c0f0 100%
+    #e2913f 0%,
+    #cc6b28 52%,
+    #a9501b 100%
   );
-  --accent-ink: #04140e;
+  --accent-ink: #fff8f2;
 
   /* Radius */
-  --radius: 22px;
+  --radius: 20px;
   --radius-sm: 12px;
-  --radius-lg: 26px;
+  --radius-lg: 24px;
 
   /* Depth */
-  --shadow: 0 50px 120px -50px rgba(0, 0, 0, 0.9);
-  --glow: 0 30px 80px -40px rgba(79, 229, 176, 0.5);
+  --shadow: 0 44px 96px -52px rgba(30, 47, 64, 0.45);
+  --glow: 0 26px 60px -38px rgba(204, 107, 40, 0.55);
 
   /* Type */
-  --font-head: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-    sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text',
-    sans-serif;
+  --font-head: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
+    'SF Pro Display', sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
+    'SF Pro Text', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
   /* Motion */
@@ -54,8 +53,8 @@
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Atmosphere */
-  --grain: 0.035;
-  --vignette: rgba(0, 0, 0, 0.22);
+  --grain: 0.02;
+  --vignette: rgba(30, 47, 64, 0.1);
 
   /* Responsive gutter — fluid side / vertical padding */
   --gutter: clamp(28px, 6vw, 120px);

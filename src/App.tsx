@@ -1,975 +1,850 @@
+import type { CSSProperties } from 'react';
 import Deck from './deck/Deck';
 import Slide from './deck/Slide';
 import Build from './deck/Build';
 import Reveal from './deck/Reveal';
-import Bento from './components/Bento';
-import Split from './components/Split';
-import CountUp from './components/CountUp';
-import TiltCard from './components/TiltCard';
-import Marquee from './components/Marquee';
-import VisualDashboard from './components/VisualDashboard';
-import StatGrid from './components/StatGrid';
-import Accordion from './components/Accordion';
-import Comparison from './components/Comparison';
-import Tabs from './components/Tabs';
-import Timeline from './components/Timeline';
-import CodeWindow from './components/CodeWindow';
-import BrowserFrame from './components/BrowserFrame';
-import SpotlightCard from './components/SpotlightCard';
-import { BarChart, LineChart, DonutChart } from './components/Charts';
-import Section from './components/Section';
-import Quote from './components/Quote';
-import Pricing from './components/Pricing';
-import Steps from './components/Steps';
-import Agenda from './components/Agenda';
-import Team from './components/Team';
 import Cover from './components/Cover';
 import BigNumber from './components/BigNumber';
-import Contrast from './components/Contrast';
-import Chat from './components/Chat';
+import Split from './components/Split';
+import Bento from './components/Bento';
+import StatGrid from './components/StatGrid';
+import Section from './components/Section';
+import Steps from './components/Steps';
 import Table from './components/Table';
-import Globe from './components/Globe';
+import BrowserFrame from './components/BrowserFrame';
+import CountUp from './components/CountUp';
 
 /* ══════════════════════════════════════════════════════════════════════
-   ⚠️  THROWAWAY DEMO showing every component. DELETE these slides and AUTHOR
-   THE USER'S DECK. Each child of <Deck> is one slide. Add speaker notes with
-   notes="…" on any slide (shown in presenter mode — press P).
+   PorsiPas — Sistem Umpan Balik Program Makan Bergizi Gratis
+   Lomba UX Design ITCC 2026 · Subtema Smart Public Service
+   ERRIC · Politeknik Elektronika Negeri Surabaya
+
+   Each child of <Deck> is one slide. Speaker notes live in notes="…"
+   (shown in the presenter overlay — press P).
    ══════════════════════════════════════════════════════════════════════ */
-const panel = (extra = 0.22): React.CSSProperties => ({
-  position: 'absolute',
-  inset: 0,
-  background: `radial-gradient(120% 100% at 30% 20%, color-mix(in srgb, var(--primary) ${
-    extra * 100
-  }%, transparent), transparent 60%), var(--surface-2)`,
-});
-const card: React.CSSProperties = {
-  padding: 22,
-  borderRadius: 'var(--radius)',
-  background: 'var(--surface)',
-  border: '1px solid var(--hair)',
+
+/* A framed prototype screenshot. `fill` stretches it into the space it is
+   given (cover crops, contain shows the whole screen); `ratio` is used when
+   the shot is not filling a slot. */
+function Shot({
+  src,
+  alt,
+  caption,
+  ratio = '16 / 9',
+  fill = false,
+  fit = 'cover',
+}: {
+  src: string;
+  alt: string;
+  caption?: string;
+  ratio?: string;
+  fill?: boolean;
+  fit?: 'cover' | 'contain';
+}) {
+  return (
+    <figure
+      style={{
+        margin: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10,
+        minWidth: 0,
+        minHeight: 0,
+        flex: fill ? '1 1 0' : undefined,
+        maxWidth: '100%',
+      }}
+    >
+      <img
+        src={src}
+        alt={alt}
+        style={{
+          display: 'block',
+          width: '100%',
+          flex: fill ? '1 1 auto' : undefined,
+          minHeight: 0,
+          aspectRatio: fill ? undefined : ratio,
+          objectFit: fit,
+          objectPosition: fit === 'cover' ? 'center top' : undefined,
+          borderRadius: 'var(--radius)',
+          border: '1px solid var(--hair)',
+          background: 'var(--surface-2)',
+          boxShadow: 'var(--shadow)',
+        }}
+      />
+      {caption && (
+        <figcaption
+          className="foot"
+          style={{ fontSize: 'clamp(11px, 1vw, 13px)', textAlign: 'center' }}
+        >
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
+/* the two media panels that hold two screenshots each */
+const pair: CSSProperties = {
+  display: 'flex',
+  gap: 'clamp(10px, 1.6vw, 20px)',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 'clamp(14px, 2vw, 28px)',
+  width: '100%',
+  height: '100%',
+  minHeight: 0,
 };
+const definePoints = [
+  'Belum ada data penerimaan menu yang cepat dan terstruktur.',
+  'Komunikasi evaluasi masih manual lewat pesan dan media sosial, tanpa rekap otomatis.',
+  'Mengganti menu hanya didasarkan pada banyaknya sisa makanan, tanpa mengetahui penyebabnya.',
+];
+
+const loopNodes = [
+  {
+    k: '01 · Siswa',
+    t: 'Ulasan anonim 5–10 detik',
+    d: 'Masuk lewat Kode Akses tanpa registrasi. Menjawab tiga indikator — rasa, porsi, kondisi — hanya dengan ikon.',
+  },
+  {
+    k: '02 · Koordinator Titik',
+    t: 'Kode sesi dan feedback mewakili kelas',
+    d: 'Menyiapkan kode harian, mengisi feedback perwakilan, dan memvalidasi keluhan sensitif.',
+  },
+  {
+    k: '03 · Penyalur',
+    t: 'Status pengiriman real-time',
+    d: 'Memperbarui status distribusi per titik sekolah: diproses, dalam perjalanan, tiba, terverifikasi.',
+  },
+  {
+    k: '04 · SPPG',
+    t: 'Menu Acceptance Dashboard',
+    d: 'Tingkat penerimaan, persentase sisa, keluhan dominan, dan tren mingguan dalam satu analitik.',
+  },
+];
+
+const designThinking = [
+  {
+    title: 'Empathize',
+    body: 'Wawancara SPPG, guru, dan ahli gizi; memetakan cara mereka mengevaluasi menu hari ini.',
+  },
+  {
+    title: 'Define',
+    body: 'Tiga kendala utama dirumuskan dari temuan lapangan, bukan dari asumsi tim.',
+  },
+  {
+    title: 'Ideate',
+    body: 'Fungsi sistem dipecah ke empat sisi pengguna; umpan balik dirancang selesai 5–10 detik.',
+  },
+  {
+    title: 'Prototype',
+    body: 'Lo-Fi untuk mengunci alur, High-Fi untuk memvalidasi visual, kontras, dan mode perangkat.',
+  },
+  {
+    title: 'Usability Testing',
+    body: 'Remote moderated dan in-person moderated dengan lima pengguna asli di dua jenjang.',
+  },
+];
+
+const findings = [
+  [
+    '1',
+    'Tombol aksi utama kurang kontras dengan latar belakang sehingga sulit ditemukan.',
+    'Tinggi',
+    'Warna tombol dinaikkan kontrasitasnya agar langsung terlihat.',
+  ],
+  [
+    '2',
+    'Alur form feedback berbeda di setiap mode, sehingga guru bingung arahkan.',
+    'Tinggi',
+    'Alur feedback diperbaiki dan pertanyaannya diseragamkan antar mode.',
+  ],
+  [
+    '3',
+    'Duplikasi label di ringkasan aktivitas: “Total Porsi Hari Ini” muncul dua kali dengan angka berbeda (3.250 dan 12).',
+    'Sedang',
+    'Label metrik kedua diperbaiki menjadi “Total Titik Aktif Hari Ini”.',
+  ],
+];
+
+const teamShots = [
+  {
+    k: 'Koordinator Titik',
+    t: 'Kode sesi dan feedback mewakili kelas',
+    d: 'Menyiapkan kode harian, mengisi feedback perwakilan, dan membuka Mode Kiosk untuk satu perangkat kelas.',
+    src: '/prototype/shot-koordinator.png',
+    alt: 'Dashboard Koordinator Titik PorsiPas',
+  },
+  {
+    k: 'Penyalur',
+    t: 'Status pengiriman per titik',
+    d: 'Pembaruan real-time dari diproses, dalam pengiriman, sampai sekolah, hingga ditandai selesai.',
+    src: '/prototype/shot-penyalur.png',
+    alt: 'Dashboard Penyalur PorsiPas',
+  },
+  {
+    k: 'Admin',
+    t: 'Kelola akun dan cabang',
+    d: 'Membuat akun SPPG dan koordinator titik, serta menautkan pengguna ke cabang SPPG tempat mereka bertugas.',
+    src: '/prototype/shot-admin.png',
+    alt: 'Dashboard Admin PorsiPas',
+  },
+];
+
+const links = [
+  {
+    l: 'Prototype interaktif',
+    u: 'figma.com/proto/PorsiPas',
+    href: 'https://www.figma.com/proto/1KE3SRtmHF0lo3H1mgCwIQ/PorsiPas?node-id=263-2813',
+  },
+  {
+    l: 'Moodboard',
+    u: 'figma.com/design/PorsiPas · 909-3691',
+    href: 'https://www.figma.com/design/1KE3SRtmHF0lo3H1mgCwIQ/PorsiPas?node-id=909-3691',
+  },
+  {
+    l: 'Style guide',
+    u: 'figma.com/design/PorsiPas · 215-1879',
+    href: 'https://www.figma.com/design/1KE3SRtmHF0lo3H1mgCwIQ/PorsiPas?node-id=215-1879',
+  },
+  {
+    l: 'Design system',
+    u: 'figma.com/design/PorsiPas · 215-1880',
+    href: 'https://www.figma.com/design/1KE3SRtmHF0lo3H1mgCwIQ/PorsiPas?node-id=215-1880',
+  },
+];
 
 export default function App() {
   return (
     <Deck>
-      {/* Cover */}
+      {/* 1 — Cover */}
       <Cover
         nav="Cover"
-        notes="Welcome — introduce yourself, then set up the problem. Hold a beat on this slide."
-        kicker="Bolt Slides · Component demo"
-        title={<span className="accent-text">Bolt Slides</span>}
-        subtitle="A responsive React deck engine. Delete this and build the real one."
-        foot="June 2026 · Component demo"
+        notes="Perkenalkan tim ERRIC dari PENS 2026. PorsiPas adalah sistem umpan balik untuk program Makan Bergizi Gratis. Satu kalimat pembuka: pemborosan makanan adalah masalah anggaran, bukan sekadar piring penuh."
+        kicker="Lomba UX Design ITCC 2026"
+        title={
+          <>
+            Porsi<span className="accent-text">Pas</span>
+          </>
+        }
+        subtitle="Sistem umpan balik Program Makan Bergizi Gratis — anonim, selesai 5–10 detik, dan langsung jadi bahan keputusan menu di SPPG."
+        foot="Tim ERRIC · Politeknik Elektronika Negeri Surabaya 2026 · Subtema Smart Public Service & Smart Waste & Resource Optimization"
       />
 
-      {/* Statement + click-build */}
+      {/* 2 — BigNumber */}
+      <BigNumber
+        nav="23–48 juta ton"
+        notes="Angka nasional ini yang membuat kami memilih food waste sebagai subtema. Sebut sumbernya, lalu langsung ke konteks MBG."
+        kicker="Food loss & waste di Indonesia"
+        value={<CountUp to={48} prefix="23–" />}
+        caption="juta ton pangan terbuang setiap tahun — tahap konsumsi menyumbang porsi terbesar, 5–19 juta ton."
+        foot="Bappenas, 2021 · 115–184 kg per kapita per tahun"
+      />
+
+      {/* 3 — Latar belakang + panel lapangan */}
+      <Split
+        nav="Latar belakang"
+        notes="Tiga keluhan lapangan ini kami temui langsung dari SPPG. Tekankan bahwa masalahnya ada di data, bukan di niat."
+        kicker="Latar belakang"
+        title={
+          <>
+            Sisa di kelas berarti{' '}
+            <span className="accent-text">anggaran terbuang.</span>
+          </>
+        }
+        body="Program MBG adalah intervensi gizi terbesar di Indonesia, dan porsinya ditanggung anggaran negara. Maka makanan yang tersisa di kelas bukan sekadar piring penuh — itu bahan pangan dan anggaran yang hilang, tanpa satu pun data penyebabnya."
+        media={
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 'clamp(18px, 3vw, 40px)',
+            }}
+          >
+            <div
+              className="mat"
+              style={{
+                borderRadius: 'var(--radius-lg)',
+                padding: 'clamp(22px, 2.6vw, 34px)',
+                width: 'min(100%, 430px)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 'clamp(12px, 1.8vh, 18px)',
+                textAlign: 'left',
+              }}
+            >
+              <div className="kicker">Kondisi di lapangan</div>
+              {[
+                ['Porsi vs kehadiran', 'Jumlah porsi tidak sesuaikan siswa yang hadir.'],
+                ['Distribusi', 'Pengiriman terlambat ke titik sekolah.'],
+                ['Evaluasi menu', 'Belum terukur cepat dan terstruktur.'],
+              ].map(([k, v]) => (
+                <div
+                  key={k}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 3,
+                    paddingTop: 12,
+                    borderTop: '1px solid var(--hair-2)',
+                  }}
+                >
+                  <strong style={{ fontSize: 'clamp(15px, 1.6vw, 17px)' }}>
+                    {k}
+                  </strong>
+                  <span
+                    style={{
+                      fontSize: 'clamp(13.5px, 1.4vw, 15px)',
+                      color: 'var(--fg-muted)',
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    {v}
+                  </span>
+                </div>
+              ))}
+              <div className="foot">Triastuty, 2025 · Bappenas, 2021</div>
+            </div>
+          </div>
+        }
+      />
+
+      {/* 4 — StatGrid */}
+      <StatGrid
+        nav="Empat angka"
+        notes="Empat angka ini yang kami bawa ke juri. Jangan dibaca semua — pilih yang paling relevan dengan pertanyaan mereka."
+        kicker="Konteks"
+        title="Empat angka yang menaruh masalah ini di depan mata."
+        stats={[
+          {
+            value: '49,05 juta',
+            label: 'Penerima manfaat MBG',
+            caption: 'dari target 82,9 juta jiwa pada 2026 · BGN, 2026',
+          },
+          {
+            value: <CountUp to={213} suffix="–551 T" />,
+            label: 'Kerugian ekonomi per tahun',
+            caption:
+              'Rp213–551 triliun, setara 4–5% PDB nasional · Bappenas, 2021',
+          },
+          {
+            value: '7,29%',
+            label: 'Porsi emisi nasional',
+            caption: '1.702,9 Mt CO₂-eq dari food loss & waste · Bappenas, 2021',
+          },
+          {
+            value: <CountUp to={42} suffix="%" />,
+            label: 'Siswa menghabiskan makanan',
+            caption:
+              'data sisa kini jadi indikator utama evaluasi menu · BGN Jawa Tengah, 2026',
+          },
+        ]}
+      />
+
+      {/* 5 — Pain points (Bento) */}
+      <Bento
+        nav="Pain points"
+        notes="Semua keluhan ini berujung pada kata yang sama: tidak tahu. Berhenti sebentar setelah slide ini."
+        kicker="Empathize · wawancara SPPG & ahli gizi"
+        title="Empat keluhan yang semuanya berujung pada “tidak tahu”."
+        tiles={[
+          {
+            c: 7,
+            title: 'Penyebab sisa tidak diketahui',
+            body: 'Sulit mengetahui mengapa makanan tidak dihabiskan siswa — rasa, tekstur, atau porsinya?',
+          },
+          {
+            c: 5,
+            title: 'Data belum terstruktur',
+            body: 'Belum ada pemisahan antara menu yang disukai dan menu paling banyak tersisa.',
+          },
+          {
+            c: 5,
+            title: 'Evaluasi masih manual',
+            body: 'Formulir, kolom saran, dan komentar media sosial — analisisnya makan waktu lama.',
+          },
+          {
+            c: 7,
+            title: 'Ganti menu tanpa alasan',
+            body: 'Keputusan mengganti menu hanya melihat banyaknya sisa makanan, bukan faktor penyebabnya.',
+          },
+        ]}
+      />
+
+      {/* 6 — Define (centered, builds) */}
       <Slide
         center
-        nav="Thesis"
-        notes="Pause before revealing the second line. The whole pitch hangs on this contrast."
+        nav="Define"
+        notes="Ini tiga kendala yang kami bawa ke tahap ideasi. Klik satu per satu, lalu diam sebentar sebelum pindah."
       >
-        <h2
-          className="headline"
-          style={{ fontSize: 'clamp(34px,5.5vw,68px)', marginInline: 'auto' }}
+        <Reveal>
+          <div className="kicker" style={{ marginBottom: 14 }}>
+            Define
+          </div>
+          <h2
+            className="headline"
+            style={{ marginInline: 'auto', maxWidth: '20ch' }}
+          >
+            Tiga kendala yang harus diselesaikan.
+          </h2>
+        </Reveal>
+        {definePoints.map((t, i) => (
+          <Build at={i + 1} key={t} style={{ width: '100%' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: 'clamp(12px, 1.8vw, 22px)',
+                alignItems: 'baseline',
+                maxWidth: '58ch',
+                margin: 'clamp(16px, 2.6vh, 24px) auto 0',
+                textAlign: 'left',
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: 'var(--primary)',
+                  flexShrink: 0,
+                }}
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <p className="lead" style={{ margin: 0, maxWidth: 'none' }}>
+                {t}
+              </p>
+            </div>
+          </Build>
+        ))}
+      </Slide>
+
+      {/* 7 — Section */}
+      <Section
+        nav="Solusi"
+        notes="Beralih dari masalah ke solusi."
+        n={2}
+        kicker="Bagian dua"
+        title={
+          <>
+            Solusi: <span className="accent-text">PorsiPas</span>
+          </>
+        }
+      />
+
+      {/* 8 — Closed loop */}
+      <Slide
+        center
+        nav="Loop tertutup"
+        notes="Empat sisi, satu lingkar. Tekankan bahwa data kembali menjadi acuan menu berikutnya — di situlah lingkarnya tertutup."
+      >
+        <Reveal>
+          <div className="kicker" style={{ marginBottom: 12 }}>
+            Ideate · pembagian fungsi
+          </div>
+          <h2
+            className="headline"
+            style={{ marginInline: 'auto', maxWidth: '22ch' }}
+          >
+            Empat sisi, satu lingkar umpan balik tertutup.
+          </h2>
+        </Reveal>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns:
+              'repeat(auto-fit, minmax(min(230px, 100%), 1fr))',
+            gap: 'clamp(12px, 1.6vw, 20px)',
+            width: '100%',
+            maxWidth: 1080,
+            margin: 'clamp(24px, 4vh, 44px) auto 0',
+          }}
         >
-          Dashboards are everywhere.{' '}
-          <span className="accent-text">Insight isn't.</span>
-        </h2>
-        <Build at={1}>
-          <p className="subhead" style={{ marginTop: 20 }}>
-            Bolt Slides turns raw events into answers — automatically.
+          {loopNodes.map((n, i) => (
+            <Build at={i + 1} key={n.k}>
+              <div
+                className="mat"
+                style={{
+                  borderRadius: 'var(--radius-lg)',
+                  padding: 'clamp(18px, 2vw, 26px)',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 9,
+                  textAlign: 'left',
+                }}
+              >
+                <div className="btile-k">{n.k}</div>
+                <h3 style={{ fontSize: 'clamp(17px, 1.9vw, 21px)' }}>{n.t}</h3>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 'clamp(13.5px, 1.4vw, 15.5px)',
+                    color: 'var(--fg-muted)',
+                    lineHeight: 1.45,
+                  }}
+                >
+                  {n.d}
+                </p>
+              </div>
+            </Build>
+          ))}
+        </div>
+        <Build at={5}>
+          <p
+            className="lead"
+            style={{
+              margin: 'clamp(20px, 3.4vh, 34px) auto 0',
+              maxWidth: '46ch',
+            }}
+          >
+            Data penerimaan menu kembali menjadi dasar penyusunan menu dan alokasi
+            bahan pangan berikutnya.
           </p>
         </Build>
       </Slide>
 
-      {/* Agenda */}
-      <Agenda
-        nav="Agenda"
-        notes="Thirty seconds max — just orient the room, then move."
-        kicker="Agenda"
-        title="What we'll cover."
-        items={[
-          'The problem',
-          'How Bolt Slides works',
-          'Proof it compounds',
-          { title: 'Pricing & the ask', hint: '5 min' },
-        ]}
-      />
-
-      {/* Contrast — the problem */}
-      <Contrast
-        nav="The problem"
-        notes="Let the left panel sting for a second before you talk to the right one."
-        kicker="The shift"
-        title="Stop digging. Start asking."
-        left={{
-          label: 'Before',
-          title: 'Dashboard sprawl',
-          points: [
-            'Forty dashboards, zero answers',
-            'Analysts as human query engines',
-            'Insights arrive a week late',
-          ],
-        }}
-        right={{
-          label: 'With Bolt Slides',
-          title: 'Answers on tap',
-          points: [
-            'Ask in plain English',
-            'Sub-second, source-linked answers',
-            'Alerts before the dashboard knows',
-          ],
-        }}
-      />
-
-      {/* Split feature */}
+      {/* 9 — Prototype siswa: beranda + masuk */}
       <Split
-        nav="Realtime"
-        notes="Emphasize sub-second latency. Point at the live chart while you talk."
-        kicker="Realtime"
+        nav="Siswa · masuk"
+        notes="Tunjukkan alur masuk: siswa tanpa akun, petugas dengan akun. Kode dibuat sistem, bukan oleh guru."
+        kicker="Prototype · sisi siswa"
         title={
           <>
-            Everything, <span className="accent-text">as it happens.</span>
+            Masuk dengan <span className="accent-text">kode.</span> Bukan akun.
           </>
         }
-        body="Live metrics with sub-second latency — no pipelines to babysit."
+        body="Siswa tidak diminta mendaftar dan tidak perlu email — cukup kode sesi yang dibuat sistem, berlaku harian, dan dipakai bersama di satu perangkat kelas. Petugas masuk dengan nomor HP, lalu sistem mengarahkan ke dasbor sesuai perannya."
         media={
-          <>
-            <div style={panel(0.22)} />
-            <div
-              style={{
-                position: 'relative',
-                padding: 'clamp(14px,3vw,40px)',
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-              }}
-            >
-              <TiltCard>
-                <VisualDashboard />
-              </TiltCard>
-            </div>
-          </>
-        }
-      />
-
-      {/* Bento */}
-      <Bento
-        nav="Platform"
-        notes="Don't read every tile — let them scan. Land on throughput and uptime."
-        kicker="One platform"
-        title="Everything in one place."
-        tiles={[
-          {
-            k: 'Throughput',
-            fig: <CountUp to={9.4} decimals={1} suffix="M" />,
-            body: 'events / min at peak.',
-            c: 5,
-            r: 2,
-            variant: 'glow',
-          },
-          {
-            k: 'Uptime',
-            fig: <CountUp to={99.99} decimals={2} suffix="%" />,
-            c: 4,
-          },
-          { k: 'Regions', fig: <CountUp to={28} />, c: 3, variant: 'accent' },
-          {
-            k: 'Connectors',
-            title: '120+ native',
-            body: 'Snowflake, Kafka, dbt…',
-            c: 4,
-          },
-          { k: 'Compliance', title: 'SOC 2 · HIPAA', c: 3 },
-        ]}
-      />
-
-      {/* Globe */}
-      <Globe
-        nav="Global"
-        notes="Spin it if you like — the markers are our actual regions. Land on the APAC number."
-        kicker="28 regions"
-        title={
-          <>
-            Everywhere your <span className="accent-text">data lives.</span>
-          </>
-        }
-        body="Ingest close to the source; answer from the nearest edge."
-        markers={[
-          {
-            location: [37.77, -122.41],
-            size: 0.08,
-            label: 'sfo1',
-            value: '221k evt/s',
-          },
-          { location: [40.71, -74.0], size: 0.08 },
-          {
-            location: [51.5, -0.12],
-            size: 0.07,
-            label: 'lhr1',
-            value: '188k evt/s',
-          },
-          { location: [52.52, 13.4], size: 0.05 },
-          {
-            location: [1.35, 103.82],
-            size: 0.07,
-            label: 'sin1',
-            value: '96k evt/s',
-          },
-          { location: [35.68, 139.69], size: 0.06 },
-          { location: [-33.87, 151.2], size: 0.05 },
-          { location: [-23.55, -46.63], size: 0.05 },
-        ]}
-        arcs={[
-          { from: [37.77, -122.41], to: [51.5, -0.12] },
-          { from: [51.5, -0.12], to: [1.35, 103.82] },
-          { from: [37.77, -122.41], to: [-23.55, -46.63] },
-        ]}
-        stats={[
-          { value: '48%', label: 'North America' },
-          { value: '31%', label: 'EMEA' },
-          { value: '21%', label: 'APAC + LATAM' },
-        ]}
-      />
-
-      {/* StatGrid — traction */}
-      <StatGrid
-        nav="Traction"
-        notes="These are the headline numbers investors remember. Say ARR is up 3× out loud."
-        kicker="Traction"
-        title="Numbers that compound."
-        stats={[
-          {
-            value: <CountUp to={4.2} decimals={1} prefix="$" suffix="M" />,
-            label: 'ARR',
-            caption: 'up 3× year over year',
-          },
-          {
-            value: <CountUp to={92} suffix="%" />,
-            label: 'Net retention',
-            caption: 'best in class',
-          },
-          {
-            value: <CountUp to={120} suffix="+" />,
-            label: 'Enterprise logos',
-            caption: 'across six industries',
-          },
-        ]}
-      />
-
-      {/* BigNumber */}
-      <BigNumber
-        nav="Big number"
-        notes="Let the number breathe. One sentence of context, then move."
-        kicker="Every day"
-        value={<CountUp to={2.4} decimals={1} suffix="B" />}
-        caption="events answered in under a second."
-        foot="Production traffic, trailing 30 days"
-      />
-
-      {/* Section divider */}
-      <Section
-        nav="Part two"
-        notes="Breathe. New chapter."
-        n={2}
-        kicker="Part two"
-        title={
-          <>
-            How it <span className="accent-text">works.</span>
-          </>
-        }
-      />
-
-      {/* Steps */}
-      <Steps
-        nav="How it works"
-        notes="Walk left to right. The point is that step three is where competitors stop."
-        kicker="How it works"
-        title="Three steps to live data."
-        items={[
-          {
-            title: 'Connect',
-            body: 'Point Bolt Slides at your warehouse or event stream. No schema to define.',
-          },
-          {
-            title: 'Model',
-            body: 'It learns your entities and builds the metric graph automatically.',
-          },
-          {
-            title: 'Act',
-            body: 'Ask questions in plain English; alerts fire before dashboards notice.',
-          },
-        ]}
-      />
-
-      {/* Chat */}
-      <Chat
-        nav="Ask anything"
-        notes="Click through the exchange one message at a time — pause after the answer lands."
-        kicker="Ask anything"
-        title="Plain English in. Answers out."
-        name="Bolt Slides"
-        messages={[
-          { from: 'user', text: 'Why did signups dip last week?' },
-          {
-            from: 'ai',
-            text: 'Signups fell 12% after Tuesday’s pricing-page change. The drop is entirely mobile — desktop is flat.',
-          },
-          { from: 'user', text: 'Roll it back for mobile only?' },
-          {
-            from: 'ai',
-            text: 'Done. I’ll alert you when the trend recovers — based on current traffic, roughly 6 hours.',
-          },
-        ]}
-      />
-
-      {/* Comparison */}
-      <Slide
-        nav="Comparison"
-        notes="Lead with realtime. If they push on price, point at the highlighted column."
-      >
-        <Reveal>
-          <div
-            className="kicker"
-            style={{ marginBottom: 12, textAlign: 'center' }}
-          >
-            Why teams switch
-          </div>
-          <h2
-            className="headline"
-            style={{
-              textAlign: 'center',
-              marginInline: 'auto',
-              marginBottom: 'clamp(22px,4vh,38px)',
-            }}
-          >
-            The honest comparison.
-          </h2>
-        </Reveal>
-        <Reveal>
-          <div style={{ maxWidth: 820, marginInline: 'auto' }}>
-            <Comparison
-              cols={['', 'Bolt Slides', 'Legacy tools']}
-              highlight={0}
-              rows={[
-                { label: 'Realtime by default', values: [true, false] },
-                { label: 'Self-host option', values: [true, false] },
-                {
-                  label: 'Time to first insight',
-                  values: ['5 min', '2 weeks'],
-                },
-                { label: 'Starting price', values: ['$29', '$99'] },
-              ]}
+          <div style={pair}>
+            <Shot
+              ratio="16 / 10"
+              src="/prototype/shot-home.jpg"
+              alt="Halaman beranda siswa PorsiPas"
+              caption="Beranda — anonim, siap dipakai bersama"
+            />
+            <Shot
+              ratio="16 / 10"
+              src="/prototype/shot-login.jpg"
+              alt="Halaman masuk staf PorsiPas"
+              caption="Masuk staf — peran dialihkan otomatis"
             />
           </div>
-        </Reveal>
-      </Slide>
-
-      {/* Tabs */}
-      <Slide
-        nav="Use cases"
-        notes="Click through the tabs as you speak to each team. Stop on the one that fits the room."
-      >
-        <Reveal>
-          <div
-            className="kicker"
-            style={{ marginBottom: 12, textAlign: 'center' }}
-          >
-            One platform
-          </div>
-          <h2
-            className="headline"
-            style={{
-              textAlign: 'center',
-              marginInline: 'auto',
-              marginBottom: 'clamp(20px,3vh,30px)',
-            }}
-          >
-            Built for every team.
-          </h2>
-        </Reveal>
-        <Reveal
-          style={{ textAlign: 'center', maxWidth: 780, marginInline: 'auto' }}
-        >
-          <Tabs
-            tabs={[
-              {
-                label: 'Engineering',
-                content: (
-                  <p className="lead">
-                    Trace any request end-to-end, alert on anomalies, ship with
-                    confidence.
-                  </p>
-                ),
-              },
-              {
-                label: 'Data',
-                content: (
-                  <div style={{ height: 180 }}>
-                    <BarChart
-                      data={[
-                        { label: 'Mon', value: 38 },
-                        { label: 'Tue', value: 55 },
-                        { label: 'Wed', value: 47 },
-                        { label: 'Thu', value: 72 },
-                        { label: 'Fri', value: 90 },
-                      ]}
-                      height={180}
-                    />
-                  </div>
-                ),
-              },
-              {
-                label: 'Ops',
-                content: (
-                  <p className="lead">
-                    One source of truth for uptime, cost, and capacity — no
-                    spreadsheets.
-                  </p>
-                ),
-              },
-            ]}
-          />
-        </Reveal>
-      </Slide>
-
-      {/* Split + code */}
-      <Split
-        nav="Developer-first"
-        notes="Three lines, no schema. If there's an engineer in the room, this is the slide for them."
-        kicker="Developer-first"
-        title={
-          <>
-            Drop-in <span className="accent-text">simple.</span>
-          </>
-        }
-        body="Add it to your app in three lines. No SDK to learn, no schema to define."
-        media={
-          <>
-            <div style={panel(0.16)} />
-            <div style={{ position: 'relative', padding: 36, width: '100%' }}>
-              <CodeWindow
-                title="app.ts"
-                highlight={[3]}
-                code={`import { track } from '@bolt-slides/sdk'
-
-track('signup', {
-  plan: 'pro',
-  source: 'landing',
-})`}
-              />
-            </div>
-          </>
         }
       />
 
-      {/* Browser frame */}
-      <Slide
-        center
-        nav="Product"
-        notes="Demo the real thing if you can. Otherwise walk the screen top to bottom."
-      >
-        <Reveal>
-          <div className="kicker" style={{ marginBottom: 14 }}>
-            See it live
+      {/* 10 — Prototype siswa: micro-feedback + kiosk */}
+      <Split
+        flip
+        nav="Siswa · 5–10 detik"
+        notes="Tiga pertanyaan, ikon, tanpa mengetik. Mode Kiosk untuk kelas SD: satu tablet, kode aktif, sesi tertutup otomatis."
+        kicker="Prototype · micro-feedback"
+        title={
+          <>
+            Selesai dalam <span className="accent-text">5–10 detik.</span>
+          </>
+        }
+        body="Rasa, porsi, dan kondisi dijawab dengan ikon — tidak ada yang perlu mengetik. Untuk kelas SD, satu tablet dipakai bergantian lewat Mode Kiosk: kode diperbarui real-time selama sesi dan ditutup otomatis saat jam sekolah berakhir."
+        media={
+          <div style={pair}>
+            <Shot
+              ratio="16 / 10"
+              src="/prototype/shot-feedback.png"
+              alt="Halaman micro-feedback siswa PorsiPas"
+              caption="Micro-feedback — anonim, pertanyaan pendek"
+            />
+            <Shot
+              ratio="16 / 10"
+              src="/prototype/shot-kiosk.png"
+              alt="Layar Mode Kiosk PorsiPas"
+              caption="Mode Kiosk — satu perangkat kelas, kode sesi aktif"
+            />
           </div>
-          <h2
-            className="headline"
-            style={{
-              fontSize: 'clamp(30px,4.4vw,52px)',
-              marginInline: 'auto',
-              marginBottom: 'clamp(18px,3vh,28px)',
-            }}
-          >
-            Your data, one screen.
-          </h2>
-        </Reveal>
-        <Reveal>
-          <div style={{ maxWidth: 800, marginInline: 'auto', width: '100%' }}>
-            <BrowserFrame url="app.boltslides.dev">
-              <div
-                className="appmock"
-                style={{ minHeight: 'clamp(280px, 42vh, 372px)' }}
-              >
-                <div
-                  className="hide-narrow"
-                  style={{
-                    borderRight: '1px solid var(--hair-2)',
-                    background: 'var(--surface)',
-                    padding: '18px 14px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 4,
-                  }}
-                >
-                  <div
-                    className="kicker"
-                    style={{ marginBottom: 12, paddingLeft: 8 }}
-                  >
-                    Bolt Slides
-                  </div>
-                  {['Overview', 'Events', 'Funnels', 'Cohorts', 'Settings'].map(
-                    (n, i) => (
-                      <div
-                        key={n}
-                        style={{
-                          padding: '8px 12px',
-                          borderRadius: 9,
-                          fontSize: 14,
-                          fontWeight: i === 0 ? 600 : 400,
-                          color:
-                            i === 0 ? 'var(--accent-ink)' : 'var(--fg-muted)',
-                          background: i === 0 ? 'var(--accent)' : 'transparent',
-                        }}
-                      >
-                        {n}
-                      </div>
-                    )
-                  )}
-                </div>
-                <div style={{ padding: '20px 24px', textAlign: 'left' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'baseline',
-                      justifyContent: 'space-between',
-                      marginBottom: 16,
-                    }}
-                  >
-                    <h3 style={{ fontSize: 19, fontWeight: 600, margin: 0 }}>
-                      Overview
-                    </h3>
-                    <span className="foot">Last 30 days</span>
-                  </div>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(min(110px, 100%), 1fr))',
-                      gap: 12,
-                      marginBottom: 16,
-                    }}
-                  >
-                    {[
-                      ['Revenue', '$1.24M', '▲ 18.2%'],
-                      ['Active users', '48,210', '▲ 9.4%'],
-                      ['Churn', '1.9%', '▼ 0.6%'],
-                    ].map(([l, v, d]) => (
-                      <div key={l} style={{ ...card, padding: 14 }}>
-                        <div className="foot" style={{ marginBottom: 5 }}>
-                          {l}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: 23,
-                            fontWeight: 600,
-                            letterSpacing: '-0.02em',
-                            fontVariantNumeric: 'tabular-nums',
-                          }}
-                        >
-                          {v}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: 12,
-                            fontWeight: 600,
-                            color: 'var(--primary)',
-                            marginTop: 4,
-                          }}
-                        >
-                          {d}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ ...card, padding: 16 }}>
-                    <LineChart
-                      points={[12, 16, 14, 22, 26, 34, 30, 44]}
-                      height={120}
-                    />
-                  </div>
-                </div>
-              </div>
-            </BrowserFrame>
-          </div>
-        </Reveal>
-      </Slide>
+        }
+      />
 
-      {/* Charts */}
+      {/* 11 — Dashboard SPPG (full-bleed browser frame) */}
       <Slide
-        nav="Metrics"
-        notes="Net retention at 94% is the one to call out — it means the product sells itself."
+        full
+        nav="Dashboard SPPG"
+        notes="Ini layar yang paling sering ditanya juri. Tunjukkan empat metrik, lalu AI Insight, lalu daftar titik distribusi."
       >
-        <Reveal>
-          <div
-            className="kicker"
-            style={{ marginBottom: 12, textAlign: 'center' }}
-          >
-            The numbers
-          </div>
-          <h2
-            className="headline"
-            style={{
-              textAlign: 'center',
-              marginInline: 'auto',
-              marginBottom: 'clamp(22px,4vh,38px)',
-            }}
-          >
-            Growth you can see.
-          </h2>
-        </Reveal>
-        <Reveal>
-          <div className="cols">
-            <div style={card}>
-              <div className="kicker" style={{ marginBottom: 14 }}>
-                Weekly active
-              </div>
-              <div style={{ height: 150 }}>
-                <BarChart
-                  data={[
-                    { label: 'W1', value: 30 },
-                    { label: 'W2', value: 44 },
-                    { label: 'W3', value: 39 },
-                    { label: 'W4', value: 61 },
-                    { label: 'W5', value: 78 },
-                    { label: 'W6', value: 96 },
-                  ]}
-                  height={150}
-                />
-              </div>
-            </div>
-            <div style={card}>
-              <div className="kicker" style={{ marginBottom: 14 }}>
-                Revenue
-              </div>
-              <LineChart
-                points={[12, 16, 14, 22, 26, 34, 30, 44]}
-                height={150}
-              />
-            </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            padding:
+              'clamp(14px, 2.2vh, 24px) var(--gutter) clamp(84px, 12vh, 132px)',
+            gap: 'clamp(10px, 1.6vh, 16px)',
+          }}
+        >
+          <Reveal>
             <div
               style={{
-                ...card,
                 display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
+                alignItems: 'flex-end',
+                justifyContent: 'space-between',
+                gap: 20,
+                flexWrap: 'wrap',
               }}
             >
-              <DonutChart value={94} label="Net retention" size={150} />
+              <div>
+                <div className="kicker" style={{ marginBottom: 8 }}>
+                  Prototype · sisi SPPG
+                </div>
+                <h2
+                  className="headline"
+                  style={{ fontSize: 'clamp(26px, 3.4vw, 42px)', margin: 0 }}
+                >
+                  Dari ulasan siswa menjadi{' '}
+                  <span className="accent-text">keputusan menu.</span>
+                </h2>
+              </div>
+              <span className="chip">Menu Acceptance Dashboard</span>
             </div>
-          </div>
-        </Reveal>
-      </Slide>
-
-      {/* Data table */}
-      <Slide
-        nav="Unit economics"
-        notes="Walk the growth column top to bottom — APAC is the story."
-      >
-        <Reveal>
-          <div
-            className="kicker"
-            style={{ marginBottom: 12, textAlign: 'center' }}
-          >
-            Unit economics
-          </div>
-          <h2
-            className="headline"
-            style={{
-              textAlign: 'center',
-              marginInline: 'auto',
-              marginBottom: 'clamp(22px,4vh,38px)',
-            }}
-          >
-            Growth, by region.
-          </h2>
-        </Reveal>
-        <Reveal>
-          <Table
-            columns={['Region', 'ARR', 'Growth', 'NRR', 'Payback']}
-            rows={[
-              ['North America', '$2.4M', '+38%', '124%', '11 mo'],
-              ['Europe', '$1.1M', '+52%', '118%', '13 mo'],
-              ['APAC', '$0.7M', '+61%', '109%', '14 mo'],
-              ['LATAM', '$0.2M', '+44%', '104%', '16 mo'],
-            ]}
-            highlightCol={2}
-            caption="Company data, FY25 · NRR = net revenue retention"
-          />
-        </Reveal>
-      </Slide>
-
-      {/* Timeline */}
-      <Slide
-        nav="Roadmap"
-        notes="Anchor on 'Now'. The AI insights line is what gets people excited — dwell there."
-      >
-        <Reveal>
-          <div
-            className="kicker"
-            style={{ marginBottom: 12, textAlign: 'center' }}
-          >
-            Where we're going
-          </div>
-          <h2
-            className="headline"
-            style={{
-              textAlign: 'center',
-              marginInline: 'auto',
-              marginBottom: 'clamp(20px,3vh,32px)',
-            }}
-          >
-            The roadmap.
-          </h2>
-        </Reveal>
-        <div style={{ maxWidth: 560, marginInline: 'auto' }}>
-          <Timeline
-            items={[
-              {
-                time: 'Shipped',
-                title: 'Realtime core',
-                body: 'Sub-second metrics across 28 regions.',
-              },
-              {
-                time: 'Now',
-                title: 'AI insights',
-                body: 'Plain-English answers from your data.',
-              },
-              {
-                time: 'Next',
-                title: 'Enterprise',
-                body: 'SSO, audit logs, and on-prem.',
-              },
-            ]}
-          />
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div
+              style={{
+                width: 'min(100%, calc((100vh - 280px) * 1.86))',
+                margin: '0 auto',
+              }}
+            >
+              <BrowserFrame url="app.porsipas.id/sppg">
+                <img
+                  src="/prototype/dashboard-sppg-beranda.png"
+                  alt="Dashboard SPPG PorsiPas — ringkasan aktivitas, AI Insight, dan daftar anggota"
+                  style={{ display: 'block', width: '100%' }}
+                />
+              </BrowserFrame>
+            </div>
+          </Reveal>
         </div>
       </Slide>
 
-      {/* Pricing */}
-      <Pricing
-        nav="Pricing"
-        notes="Anchor on Pro. Enterprise exists so Pro looks reasonable — don't oversell it."
-        kicker="Pricing"
-        title="Simple, honest plans."
-        tiers={[
-          {
-            name: 'Starter',
-            price: '$29',
-            period: '/mo',
-            blurb: 'For small teams getting live.',
-            features: [
-              '1M events / month',
-              'Realtime dashboards',
-              'Community support',
-            ],
-          },
-          {
-            name: 'Pro',
-            price: '$79',
-            period: '/mo',
-            blurb: 'Everything growing teams need.',
-            features: [
-              '10M events / month',
-              'AI insights + alerts',
-              'Self-host option',
-              'Priority support',
-            ],
-            highlight: true,
-          },
-          {
-            name: 'Enterprise',
-            price: 'Custom',
-            blurb: 'Scale, compliance, and control.',
-            features: [
-              'Unlimited events',
-              'SSO + audit logs',
-              'On-prem deploy',
-              'Dedicated CSM',
-            ],
-          },
-        ]}
-      />
-
-      {/* Spotlight principles */}
+      {/* 12 — Sisi tim (screenshot cards) */}
       <Slide
-        nav="Principles"
-        notes="Hover the cards for the glow if presenting on a screen. Keep this one short."
+        nav="Sisi tim"
+        notes="Tiga peran tim ini memakai PorsiPas setiap hari. Cukup satu kalimat per peran, jangan dibaca semua."
       >
-        <Reveal>
-          <div
-            className="kicker"
-            style={{ marginBottom: 12, textAlign: 'center' }}
-          >
-            What we believe
-          </div>
-          <h2
-            className="headline"
-            style={{
-              textAlign: 'center',
-              marginInline: 'auto',
-              marginBottom: 'clamp(22px,4vh,38px)',
-            }}
-          >
-            Three principles.
-          </h2>
-        </Reveal>
-        <Reveal>
+        <div className="container">
+          <Reveal>
+            <div className="kicker" style={{ marginBottom: 10 }}>
+              Prototype · sisi tim
+            </div>
+            <h2
+              className="headline"
+              style={{ marginBottom: 'clamp(20px,3vh,34px)', maxWidth: '24ch' }}
+            >
+              Sisi tim: bagikan kode, kirim, kelola akun.
+            </h2>
+          </Reveal>
           <div className="cols">
-            {[
-              {
-                k: '01',
-                t: 'Fast by default',
-                d: 'Speed is a feature. Everything is realtime.',
-              },
-              {
-                k: '02',
-                t: 'Yours to own',
-                d: 'Your data, your infra, no lock-in.',
-              },
-              {
-                k: '03',
-                t: 'Honest pricing',
-                d: 'No per-seat tax. Scale without surprises.',
-              },
-            ].map((p) => (
-              <SpotlightCard key={p.k}>
+            {teamShots.map((t, i) => (
+              <Reveal key={t.k} delay={0.1 + i * 0.08} style={{minWidth: 0}}>
                 <div
-                  className="kicker accent-text"
-                  style={{ marginBottom: 12 }}
+                  className="mat"
+                  style={{
+                    borderRadius: 'var(--radius-lg)',
+                    overflow: 'hidden',
+                    height: '100%',
+                    minWidth: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
                 >
-                  {p.k}
+                  <div
+                    style={{
+                      aspectRatio: '16 / 10',
+                      background: 'var(--surface-2)',
+                      borderBottom: '1px solid var(--hair-2)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <img
+                      src={t.src}
+                      alt={t.alt}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'left top',
+                      }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      padding: 'clamp(16px, 1.8vw, 22px)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 7,
+                    }}
+                  >
+                    <div className="btile-k">{t.k}</div>
+                    <h3 style={{ fontSize: 'clamp(17px, 1.8vw, 20px)' }}>{t.t}</h3>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 'clamp(13.5px, 1.4vw, 15px)',
+                        color: 'var(--fg-muted)',
+                        lineHeight: 1.45,
+                      }}
+                    >
+                      {t.d}
+                    </p>
+                  </div>
                 </div>
-                <h3
-                  style={{
-                    fontSize: 'clamp(20px,2.2vw,26px)',
-                    fontWeight: 600,
-                    margin: '0 0 8px',
-                  }}
-                >
-                  {p.t}
-                </h3>
-                <p
-                  style={{
-                    color: 'var(--fg-muted)',
-                    fontSize: 15,
-                    margin: 0,
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {p.d}
-                </p>
-              </SpotlightCard>
+              </Reveal>
             ))}
           </div>
-        </Reveal>
+        </div>
       </Slide>
 
-      {/* Accordion — FAQ */}
+      {/* 13 — Metodologi */}
+      <Steps
+        nav="Metodologi"
+        notes="Lima tahap Design Thinking, masing-masing menghasilkan artefak yang bisa ditunjukkan."
+        kicker="Metodologi desain"
+        title="Lima tahap Design Thinking."
+        items={designThinking}
+      />
+
+      {/* 14 — Usability testing */}
       <Slide
-        nav="FAQ"
-        notes="Only open the questions they actually ask. Skip the rest to keep momentum."
+        nav="Usability testing"
+        notes="Tiga temuan, dua di antaranya severity tinggi — ketiganya sudah kami perbaiki. Tunjuk barisnya, jangan dibaca."
       >
         <Reveal>
           <div
             className="kicker"
             style={{ marginBottom: 12, textAlign: 'center' }}
           >
-            Common questions
+            Usability testing
           </div>
           <h2
             className="headline"
             style={{
               textAlign: 'center',
               marginInline: 'auto',
-              marginBottom: 'clamp(20px,3vh,30px)',
+              marginBottom: 'clamp(18px, 3vh, 30px)',
+              maxWidth: '22ch',
             }}
           >
-            Frequently asked.
+            Tiga temuan, dan ketiganya sudah kami perbaiki.
           </h2>
-        </Reveal>
-        <Reveal>
-          <div style={{ maxWidth: 720, marginInline: 'auto' }}>
-            <Accordion
-              items={[
-                {
-                  title: 'How long does setup take?',
-                  body: 'Five minutes — point Bolt Slides at your warehouse and you are live.',
-                },
-                {
-                  title: 'Can we self-host?',
-                  body: 'Yes. A Docker image and Terraform module ship with every plan.',
-                },
-                {
-                  title: 'How is it priced?',
-                  body: 'Flat monthly, no per-seat tax — you scale without surprises.',
-                },
-              ]}
-            />
-          </div>
-        </Reveal>
-      </Slide>
-
-      {/* Team */}
-      <Team
-        nav="Team"
-        notes="One line per person. The point is the operator pedigree, not the bios."
-        kicker="The team"
-        title="Built by operators."
-        people={[
-          { name: 'Dana Kim', role: 'CEO · ex-Stripe' },
-          { name: 'Ade Obi', role: 'CTO · ex-Datadog' },
-          { name: 'Mara Silva', role: 'Design · ex-Linear' },
-          { name: 'Jon Park', role: 'GTM · ex-Snowflake' },
-        ]}
-      />
-
-      {/* Logos */}
-      <Slide
-        center
-        nav="Customers"
-        notes="Name-drop the two logos most relevant to this audience."
-      >
-        <Reveal>
-          <div className="kicker" style={{ marginBottom: 28 }}>
-            Trusted by teams everywhere
-          </div>
-        </Reveal>
-        <Marquee
-          items={[
-            'Northwind',
-            'Globex',
-            'Initech',
-            'Umbra',
-            'Hooli',
-            'Vehement',
-            'Soylent',
-          ]}
-        />
-      </Slide>
-
-      {/* Quote */}
-      <Quote
-        nav="Quote"
-        notes="Read it slowly, then stay silent for a second. Let it land."
-        text="We replaced four tools with Bolt Slides and never looked back."
-        name="Dana Kim"
-        role="VP Engineering, Acme"
-      />
-
-      {/* CTA */}
-      <Slide
-        center
-        nav="Close"
-        notes="Make the ask explicitly. Leave the contact details on screen while you take questions."
-      >
-        <Reveal>
-          <h2 className="display" style={{ fontSize: 'clamp(40px,7vw,96px)' }}>
-            <span className="accent-text">Let's talk.</span>
-          </h2>
-          <p className="subhead" style={{ marginTop: 16 }}>
-            hello@bolt.new
+          <p
+            className="foot"
+            style={{
+              textAlign: 'center',
+              marginBottom: 'clamp(16px, 2.6vh, 26px)',
+            }}
+          >
+            5 pengguna asli · remote moderated &amp; in-person moderated
           </p>
+        </Reveal>
+        <Reveal>
+          <Table
+            columns={[
+              'No',
+              { label: 'Kendala pengguna', align: 'left' },
+              { label: 'Tingkat keparahan', align: 'center' },
+              { label: 'Perbaikan', align: 'left' },
+            ]}
+            rows={findings}
+            highlightCol={2}
+            caption="Sumber: hasil usability testing PorsiPas — siswa SD/SMP/SMA, guru/koordinator titik, dan SPPG"
+          />
+        </Reveal>
+      </Slide>
+
+      {/* 15 — Kesimpulan + CTA */}
+      <Slide
+        center
+        nav="Kesimpulan"
+        notes="Tutup dengan ajakan konkret: buka prototype-nya. Biarkan tautan tetap terlihat saat sesi tanya jawab."
+      >
+        <Reveal>
+          <div className="kicker" style={{ marginBottom: 14 }}>
+            Kesimpulan
+          </div>
+          <h2
+            className="display"
+            style={{
+              fontSize: 'clamp(32px, 5.4vw, 74px)',
+              maxWidth: '18ch',
+              marginInline: 'auto',
+            }}
+          >
+            Umpan balik <span className="accent-text">5–10 detik</span> yang
+            langsung dipakai.
+          </h2>
+          <p
+            className="lead"
+            style={{
+              margin: 'clamp(14px, 2.4vh, 22px) auto 0',
+              maxWidth: '52ch',
+            }}
+          >
+            Satu alur yang cepat, inklusif, dan anonim untuk siswa — dan data
+            penerimaan menu yang bisa langsung dipakai SPPG untuk menyusun menu,
+            porsi, dan distribusi berikutnya.
+          </p>
+        </Reveal>
+        <Reveal delay={0.14}>
+          <div
+            style={{
+              width: 'min(100%, 640px)',
+              margin: 'clamp(20px, 3.4vh, 34px) auto 0',
+              textAlign: 'left',
+            }}
+          >
+            {links.map((l) => (
+              <a
+                key={l.l}
+                href={l.href}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  justifyContent: 'space-between',
+                  gap: 16,
+                  padding: 'clamp(10px, 1.6vh, 14px) 2px',
+                  borderTop: '1px solid var(--hair-2)',
+                  textDecoration: 'none',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 'clamp(14px, 1.5vw, 16px)',
+                    fontWeight: 600,
+                    color: 'var(--fg)',
+                  }}
+                >
+                  {l.l}
+                </span>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 'clamp(11.5px, 1.2vw, 13px)',
+                    color: 'var(--fg-muted)',
+                    textAlign: 'right',
+                  }}
+                >
+                  {l.u}
+                </span>
+              </a>
+            ))}
+            <div className="foot" style={{ paddingTop: 14, textAlign: 'center' }}>
+              Chery Ardin Dimalta · Muhammad Rizieq Anwar · Reyvan Andycka Farrel
+              Alinskie — ERRIC, PENS 2026
+            </div>
+          </div>
         </Reveal>
       </Slide>
     </Deck>
